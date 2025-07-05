@@ -13,7 +13,8 @@ const processedMessages = new Set();
 app.post("/webhook", async (req, res) => {
   const body = req.body;
   const message = body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
-  const phone_number_id = body.entry?.[0]?.changes?.[0]?.value?.metadata?.phone_number_id;
+  const phone_number_id =
+    body.entry?.[0]?.changes?.[0]?.value?.metadata?.phone_number_id;
 
   if (message?.type === "text") {
     const from = message.from;
@@ -32,32 +33,40 @@ app.post("/webhook", async (req, res) => {
       await sendSticker(phone_number_id, from);
     } else {
       // ✅ Echo back message
-      await axios.post(`https://graph.facebook.com/v18.0/${phone_number_id}/messages`, {
-        messaging_product: "whatsapp",
-        to: from,
-        text: {
-          body: "Echo: " + msgBody + "\nIs this what you said?",
+      await axios.post(
+        `https://graph.facebook.com/v18.0/${phone_number_id}/messages`,
+        {
+          messaging_product: "whatsapp",
+          to: from,
+          text: {
+            body: "Echo: " + msgBody + "\nIs this what you said?",
+          },
+          context: {
+            message_id: messageId,
+          },
         },
-        context: {
-          message_id: messageId,
-        },
-      }, {
-        headers: {
-          Authorization: `Bearer ${GRAPH_API_TOKEN}`,
-        },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+          },
+        }
+      );
     }
 
     // ✅ Mark as read
-    await axios.post(`https://graph.facebook.com/v18.0/${phone_number_id}/messages`, {
-      messaging_product: "whatsapp",
-      status: "read",
-      message_id: messageId,
-    }, {
-      headers: {
-        Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+    await axios.post(
+      `https://graph.facebook.com/v18.0/${phone_number_id}/messages`,
+      {
+        messaging_product: "whatsapp",
+        status: "read",
+        message_id: messageId,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+        },
+      }
+    );
   }
 
   res.sendStatus(200); // Always acknowledge
@@ -65,19 +74,22 @@ app.post("/webhook", async (req, res) => {
 
 // ✅ Sticker sending function
 async function sendSticker(phone_number_id, to) {
-  const response = await fetch(`https://graph.facebook.com/v19.0/${phone_number_id}/messages`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${GRAPH_API_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messaging_product: "whatsapp",
-      to: to,
-      type: "sticker",
-      sticker: { id: "702277402674796" }, // Replace with your uploaded sticker's media ID
-    }),
-  });
+  const response = await fetch(
+    `https://graph.facebook.com/v19.0/${phone_number_id}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: to,
+        type: "sticker",
+        sticker: { id: "702277402674796" }, // Replace with your uploaded sticker's media ID
+      }),
+    }
+  );
 
   const result = await response.json();
   console.log("Sticker send result:", result);
