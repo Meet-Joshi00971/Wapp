@@ -7,6 +7,8 @@
 
 import express from "express";
 import axios from "axios";
+const fetch = require('node-fetch');
+
 
 const app = express();
 app.use(express.json());
@@ -117,7 +119,7 @@ async function sendSticker(phone_number_id, to) {
       messaging_product: 'whatsapp',
       to: to,
       type: 'sticker',
-      sticker: { id: 'MEDIA_ID' }
+      sticker: { id: '702277402674796' }
     })
   });
 }
