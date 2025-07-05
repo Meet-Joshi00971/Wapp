@@ -4,10 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
+/*
 import express from "express";
 import axios from "axios";
-const fetch = require('node-fetch');
+// ✅ Use this instead
+import fetch from 'node-fetch';
+
 
 
 const app = express();
@@ -66,7 +68,7 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 */
-
+/*
 // accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
 // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
 app.get("/webhook", (req, res) => {
@@ -133,3 +135,4 @@ Checkout README.md to start.</pre>`);
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`);
 });
+*/
