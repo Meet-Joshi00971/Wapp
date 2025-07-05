@@ -37,7 +37,8 @@ app.post("/webhook", async (req, res) => {
       data: {
         messaging_product: "whatsapp",
         to: message.from,
-        text: { body: "Echo: " + message.text.body },
+        text: { body: "Echo: " + message.text.body + "\n Is this what you said?" },
+        image :{},
         context: {
           message_id: message.id, // shows the message as a reply to the original user message
         },
