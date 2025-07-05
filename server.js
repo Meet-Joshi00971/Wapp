@@ -65,7 +65,7 @@ app.post("/webhook", async (req, res) => {
 
 // accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
 // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
-app.get("/webhook", (req, res) => {
+/*app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
@@ -79,7 +79,47 @@ app.get("/webhook", (req, res) => {
     // respond with '403 Forbidden' if verify tokens do not match
     res.sendStatus(403);
   }
+});*/
+
+app.post('/webhook', async (req, res) => {
+  const body = req.body;
+
+  if (
+    body.object &&
+    body.entry &&
+    body.entry[0].changes &&
+    body.entry[0].changes[0].value.messages &&
+    body.entry[0].changes[0].value.messages[0]
+  ) {
+    const message = body.entry[0].changes[0].value.messages[0];
+    const phone_number_id = body.entry[0].changes[0].value.metadata.phone_number_id;
+    const from = message.from;
+    const msgBody = message.text?.body.toLowerCase();
+
+    if (msgBody && msgBody.includes("hate")) {
+      await sendSticker(phone_number_id, from);
+    }
+  }
+
+  res.sendStatus(200);
 });
+
+async function sendSticker(phone_number_id, to) {
+  await fetch(`https://graph.facebook.com/v19.0/${phone_number_id}/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${GRAPH_API_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      messaging_product: 'whatsapp',
+      to: to,
+      type: 'sticker',
+      sticker: { id: 'MEDIA_ID' }
+    })
+  });
+}
+
 
 app.get("/", (req, res) => {
   res.send(`<pre>Nothing to see here.
