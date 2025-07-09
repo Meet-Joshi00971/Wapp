@@ -35,11 +35,11 @@ app.post("/webhook", async (req, res) => {
         {
           messaging_product: "whatsapp",
           to: from,
-          type: template,
+          type: "template",
           template:{
-            name: welcome_custom,
+            name: "welcome_custom",
             language:{
-              code: en
+              code: "en"
             },
           },
           context: {
