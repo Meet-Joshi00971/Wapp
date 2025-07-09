@@ -28,9 +28,30 @@ app.post("/webhook", async (req, res) => {
     processedMessages.add(messageId);
     setTimeout(() => processedMessages.delete(messageId), 5 * 60 * 1000); // Auto-remove after 5 mins
 
-    if (msgBody && msgBody.includes("hate")) {
+    if (msgBody && (msgBody.includes("hello") || msgBody.includes("hi"))) {
       // ✅ Send sticker
-      await sendSticker(phone_number_id, from);
+      await axiios.post(
+        `https://graph.facebook.com/v18.0/${phone_number_id}/messages`,
+        {
+          messaging_product: "whatsapp",
+          to: from,
+          type: template,
+          template:{
+            name: welcome_custom,
+            language:{
+              code: en
+            },
+          },
+          context: {
+            message_id: messageId,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${GRAPH_API_TOKEN}`,
+          },
+        }
+      );
     } else {
       // ✅ Echo back message
       await axios.post(
