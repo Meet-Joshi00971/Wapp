@@ -30,7 +30,7 @@ app.post("/webhook", async (req, res) => {
 
     if (msgBody && (msgBody.includes("hello") || msgBody.includes("hi"))) {
       // ✅ Send sticker
-      await axiios.post(
+      await axios.post(
         `https://graph.facebook.com/v18.0/${phone_number_id}/messages`,
         {
           messaging_product: "whatsapp",
